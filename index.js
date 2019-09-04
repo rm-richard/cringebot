@@ -6,6 +6,8 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
+const config = require("./config.json");
+
 db.defaults({ users: [] }).write();
 //db.get('users').push({id: 1, name: 'test', char: 'asd'}).write();
 
@@ -32,11 +34,9 @@ client.on('message', msg => {
   }
 });
 
-var token = process.env.BOT_TOKEN;
-
-if (token) {
+if (config.botToken) {
   console.log("Logging in...")
-  client.login(token);
+  client.login(config.botToken);
 } else {
-  console.log('Environment variable BOT_TOKEN not found!')
+  console.log('"botToken" not found in config.json!')
 }
