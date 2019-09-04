@@ -6,32 +6,41 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-const config = require("./config.json");
+const Enmap = require("enmap");
+const fs = require('fs');
+const config = require('./config.json');
 
+// initialize db
 db.defaults({ users: [] }).write();
 //db.get('users').push({id: 1, name: 'test', char: 'asd'}).write();
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}`);
-    console.log(`Serving ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+client.config = config;
+
+// load events
+fs.readdir("./events/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    const event = require(`./events/${file}`);
+    let eventName = file.split(".")[0];
+    client.on(eventName, event.bind(null, client));
+    delete require.cache[require.resolve(`./events/${file}`)];
+  });
 });
 
-client.on('message', msg => {
-  if (msg.author.bot) return;
+// load commands
+client.commands = new Enmap();
+fs.readdir("./commands/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let command = require(`./commands/${file}`);
+    let commandName = file.split(".")[0];
+    console.log(`Attempting to load command ${commandName}`);
+    client.commands.set(commandName, command);
+  });
 
-  if (msg.content == '!ping') {
-    msg.reply('Pong!');
-  }
-
-  if (msg.content == '!mirror') {
-    var attach = new Discord.Attachment(msg.author.avatarURL.split('?')[0]);
-    msg.channel.send(attach);
-  }
-
-  if (msg.content == '!grind') {
-    console.log(msg.author);
-    console.log(msg.author.username);
-  }
+  console.log(`Successfully loaded ${files.length} commands.`)
 });
 
 if (config.botToken) {
