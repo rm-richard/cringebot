@@ -1,18 +1,9 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('db.json');
-const db = low(adapter);
-
 const Enmap = require("enmap");
 const fs = require('fs');
 const config = require('./config.json');
-
-// initialize db
-db.defaults({ users: [] }).write();
-//db.get('users').push({id: 1, name: 'test', char: 'asd'}).write();
 
 client.config = config;
 

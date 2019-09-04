@@ -10,9 +10,9 @@
   "author": "rm-richard <arvarichi@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "better-sqlite-pool": "^0.2.2",
     "discord.js": "^11.5.1",
-    "enmap": "^5.1.2",
-    "lowdb": "^1.0.0"
+    "enmap": "^5.1.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

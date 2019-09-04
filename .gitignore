@@ -2,3 +2,5 @@ node_modules/
 db.json
 config.json
 npm-debug.log
+data/
+package-lock.json
