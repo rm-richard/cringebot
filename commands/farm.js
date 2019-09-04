@@ -38,5 +38,5 @@ function formatWallet(copper) {
   const c = copper % 100;
   const s = Math.floor(copper / 100) % 100;
   const g = Math.floor(copper / 10000);
-  return `${g} gold ${s} silver ${c} copper`;
+  return `${g} <:gold:618818303615303700> ${s} <:silver:618818303632343111> ${c} <:copper:618818303577554989>`;
 }
