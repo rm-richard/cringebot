@@ -1,5 +1,13 @@
 {
   "botToken": "secret.bot.token",
   "prefix": "!",
-  "ownerID": "123456789"
+  "ownerID": "123456789",
+  "farmTiers": [
+    {"name": "Rabszolga", "averageGain": 25, "investCost": 100},
+    {"name": "Paraszt", "averageGain": 125, "investCost": 500},
+    {"name": "Földműves", "averageGain": 800, "investCost": 7500},
+    {"name": "Kisgazda", "averageGain": 2500, "investCost": 10000},
+    {"name": "Nagybirtokos", "averageGain": 10000, "investCost": 250000},
+    {"name": "Sorosbérenc", "averageGain": 50000, "investCost": 5000000}
+  ]
 }
