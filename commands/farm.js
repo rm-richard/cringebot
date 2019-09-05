@@ -20,7 +20,7 @@ exports.run = (client, message, args) => {
   const totalCopper = client.farmDb.get(key, 'copper');
 
   if (args[0] === 'invest') {
-    invest(key, client, message);
+    invest(key, client, message, farmTierIdx, farmTier, totalCopper);
   } else {
     // standard farm + status flow
     const currentTime = new Date().getTime();
@@ -30,7 +30,7 @@ exports.run = (client, message, args) => {
     const reply = new Discord.RichEmbed();
 
     if (farmAvailable < currentTime) {
-      const farmedCopper = generateRandomInteger(45, 300);
+      const farmedCopper = getFarmFromAvg(farmTier.averageGain);
       client.farmDb.math(key, "+", farmedCopper, 'copper');
       client.farmDb.set(key, currentTime, 'lastFarmed');
 
@@ -54,8 +54,19 @@ exports.run = (client, message, args) => {
   }
 }
 
-function invest(key, client, message) {
-  message.reply('investing is not implemented yet!');
+function invest(key, client, message, farmTierIdx, farmTier, totalCopper) {
+  if (totalCopper < farmTier.investCost) {
+    return message.reply(`not enough funds! You need ${formatWallet(farmTier.investCost)} to improve your farm!`);
+  }
+  else {
+    client.farmDb.math(key, "-", farmTier.investCost, 'copper');
+    client.farmDb.set(key, farmTierIdx + 1, 'farmTier');
+    return message.reply(`farm improved! You are now a ${client.config.farmTiers[farmTierIdx+1].name}! GG`)
+  }
+}
+
+function getFarmFromAvg(averageGain) {
+  return generateRandomInteger(averageGain * 0.6, averageGain * 1.5);
 }
 
 function generateRandomInteger(min, max) {
