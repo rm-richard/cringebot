@@ -21,7 +21,17 @@ exports.run = (client, message, args) => {
 
   if (args[0] === 'invest') {
     invest(key, client, message, farmTierIdx, farmTier, totalCopper);
-  } else {
+  }
+  else if (args[0] === 'tiers') {
+    var reply = 'Available farm tiers (average income / upgrade cost):\n';
+
+    client.config.farmTiers.forEach(tier => {
+      reply = reply.concat(`  - ${tier.name} (${formatWallet(tier.averageGain)} / ${formatWallet(tier.investCost)})\n`)
+    });
+
+    message.channel.send(reply);
+  }
+  else {
     // standard farm + status flow
     const currentTime = new Date().getTime();
     const farmAvailable = client.farmDb.get(key, 'lastFarmed') + FARM_DELAY_MS;
@@ -77,5 +87,5 @@ function formatWallet(copper) {
   const c = copper % 100;
   const s = Math.floor(copper / 100) % 100;
   const g = Math.floor(copper / 10000);
-  return `${g} <:gold:618818303615303700> ${s} <:silver:618818303632343111> ${c} <:copper:618818303577554989>`;
+  return `**${g} <:gold:618818303615303700> ${s} <:silver:618818303632343111> ${c} <:copper:618818303577554989>**`;
 }

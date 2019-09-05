@@ -13,4 +13,5 @@ exports.run = (client, message, args) => {
     .addField('Mention', `<@${message.author.id}>`);
 
   message.reply(reply);
+  message.reply('this is a \nmultiline\nmessage');
 }
