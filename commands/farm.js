@@ -5,8 +5,6 @@ const format = require('../lib/formatters.js');
 const FARM_DELAY_MS = 20 * 60 * 1000;
 
 exports.run = (client, message, args) => {
-  if (!client.farmDb) client.farmDb = new Enmap({name: 'farmDb', ensureProps: true});
-
   const key = message.author.id;
 
   client.farmDb.ensure(key, {

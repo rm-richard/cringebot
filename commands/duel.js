@@ -45,7 +45,6 @@ exports.run = (client, message, args) => {
   });
 }
 
-// FIXME: client.farmDb needs to be initialized by the farm command first
 function loseGold(client, userId) {
   client.farmDb.ensure(userId, {copper: 0});
   const g = Math.floor(client.farmDb.get(userId, 'copper') / 2);

@@ -6,6 +6,8 @@ const fs = require('fs');
 const config = require('./config.json');
 
 client.config = config;
+client.farmDb = new Enmap({name: 'farmDb', ensureProps: true});
+client.playDb = new Enmap({name: 'playDb', ensureProps: true});
 
 // load events
 fs.readdir("./events/", (err, files) => {
