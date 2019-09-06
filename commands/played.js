@@ -25,5 +25,7 @@ exports.run = (client, message, args) => {
 
   reply += `\nYour total ingame time is **${format.toDisplayedTime(totalTime)}**.`;
 
+  reply += `\n\nThe people on this channel have been playing the game for a grand total of **${format.toDisplayedTime(playtime.guildTotal(client))}**.`
+
   message.reply(reply);
 }
