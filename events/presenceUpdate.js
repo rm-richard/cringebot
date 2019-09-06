@@ -1,4 +1,5 @@
 const format = require('../lib/formatters.js');
+const playtime = require('../lib/playtime.js');
 
 module.exports = (client, oldMember, newMember) => {
   const oldGame = oldMember.presence.game;
@@ -10,6 +11,10 @@ module.exports = (client, oldMember, newMember) => {
        elapsedTime = new Date().getTime() - oldGame.timestamps.start.getTime();
     }
     console.log(`${oldMember.displayName} stopped playing ${oldGame.name} after ${format.toDisplayedTime(elapsedTime)}.`);
+
+    let total = playtime.update(client, oldMember.id, oldGame);
+
+    console.log(`${oldMember.displayName} played ${oldGame.name} for a total of ${format.toDisplayedTime(total)}`);
   }
   else if (!oldGame && newGame) {
     console.log(`${oldMember.displayName} started playing ${newGame.name}`);

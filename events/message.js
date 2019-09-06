@@ -7,5 +7,11 @@ module.exports = (client, message) => {
 
   const cmd = client.commands.get(command);
   if (!cmd) return;
-  cmd.run(client, message, args);
+
+  try {
+    cmd.run(client, message, args);
+  } catch(error) {
+    console.error(error);
+    message.reply(`unexpected exception while executing the command: ${error}`);
+  }
 };
