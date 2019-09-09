@@ -36,6 +36,18 @@ fs.readdir("./commands/", (err, files) => {
   console.log(`Successfully loaded ${files.length} commands.`)
 });
 
+// load tasks
+fs.readdir("./tasks/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let task = require(`./tasks/${file}`);
+    let taskName = file.split(".")[0];
+    console.log(`Scheduling task ${taskName}`);
+    task.schedule(client);
+  });
+});
+
 if (config.botToken) {
   console.log("Logging in...")
   client.login(config.botToken);

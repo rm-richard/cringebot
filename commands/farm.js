@@ -35,6 +35,15 @@ exports.run = (client, message, args) => {
       message.channel.send(reply);
     }
   }
+  else if (args[0] === 'status') {
+    const reply = new Discord.RichEmbed().setColor('#0cf246')
+      .setThumbnail(message.author.displayAvatarURL)
+      .addField('Total gold', format.toGSC(client.farmDb.get(key, 'copper')), true)
+      .addField('Farm tier', farmTier.name, true)
+      .addField('Next tier cost', format.toGSC(farmTier.investCost, true), true)
+      .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true);
+      message.channel.send(reply);
+  }
   else {
     // standard farm + status flow
     reduceFatigue(client, key);
