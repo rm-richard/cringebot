@@ -9,5 +9,11 @@
     {"name": "Földműves", "averageGain": 800, "investCost": 7500},
     {"name": "Kisgazda", "averageGain": 2500, "investCost": 10000},
     {"name": "Nagybirtokos", "averageGain": 10000, "investCost": 250000}
-  ]
+  ],
+  "fatigue": {
+    "decreaseIntervalMs": 3600000,
+    "initial": 6,
+    "scalar": 4,
+    "base": 1.4
+  }
 }
