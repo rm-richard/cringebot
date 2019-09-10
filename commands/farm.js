@@ -10,7 +10,8 @@ exports.run = (client, message, args) => {
     copper: 0,
     lastFarmed: 0,
     farmTier: 0,
-    fatigueLevel: 0
+    fatigueLevel: 0,
+    bonusAvailable: false
   });
 
   const farmTierIdx = client.farmDb.get(key, 'farmTier');
@@ -53,14 +54,20 @@ exports.run = (client, message, args) => {
     const reply = new Discord.RichEmbed();
 
     if (farmAvailable < currentTime) {
+      const bonusAvailable = client.farmDb.get(key, 'bonusAvailable');
       const farmedCopper = getFarmFromAvg(farmTier.averageGain);
-      client.farmDb.math(key, "+", farmedCopper, 'copper');
+      const bonusCopper = bonusAvailable ? farmedCopper * client.config.bonus.multiplier : 0;
+
+      client.farmDb.set(key, false, 'bonusAvailable');
+      client.farmDb.math(key, "+", farmedCopper + bonusCopper, 'copper');
       client.farmDb.inc(key, 'fatigueLevel');
       client.farmDb.set(key, currentTime, 'lastFarmed');
 
+      const bonusMsg = bonusAvailable ? `\nFirst farm of the day bonus: ${format.toGSC(bonusCopper)}!` : '';
+
       reply.setColor('#0cf246')
         .setTitle('Farming successful!')
-        .setDescription(`<@${message.author.id}>, you just gained ${format.toGSC(farmedCopper)}! Check back in ${format.toDisplayedTime(calculateDelay(client, key))}.`);
+        .setDescription(`<@${message.author.id}>, you just gained ${format.toGSC(farmedCopper)}!${bonusMsg}`);
     }
     else {
       reply.setColor('#a30a0a')

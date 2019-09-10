@@ -14,5 +14,8 @@
     "initial": 6,
     "scalar": 4,
     "base": 1.4
+  },
+  "bonus": {
+    "multiplier": 4
   }
 }

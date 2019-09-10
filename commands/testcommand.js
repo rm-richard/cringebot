@@ -16,10 +16,4 @@ exports.run = (client, message, args) => {
     .addField(`1x ${boj}  !buy quads`, 'You invest extra time in your next harvest. The next !farm command will earn you 400% gold', true)
     .addField(`10x ${boj}  !buy invest`, 'Igor rode the pump again, and Ethereum prices are inflated as fuck. You decide to pay for your next upgrade in an exotic currency.', true);
   message.reply(reply);
-
-  console.log("");
-
-  /*const yesterday = new Date(1567845684000);
-  const now = new Date(1568104900000);
-  console.log(`other day ${yesterday.getDay()}, now day: ${now.getDay()}`);*/
 }
