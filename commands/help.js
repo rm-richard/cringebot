@@ -13,7 +13,7 @@ Supported commands:
 
 Concepts:
   Fatigue: each level adds more delay between farms. Each successful
-           farm increases fatigue by 20%. Reduced by 1 every hour.
+           farm increases fatigue by 20%. Reduced by 1 ever 3 hours.
   Daily bonus: the first farm each day yields extra 400% gold.
 \`\`\``;
 
