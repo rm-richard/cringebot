@@ -57,10 +57,12 @@ exports.run = (client, message, args) => {
       const bonusAvailable = client.farmDb.get(key, 'bonusAvailable');
       const farmedCopper = getFarmFromAvg(farmTier.averageGain);
       const bonusCopper = bonusAvailable ? farmedCopper * client.config.bonus.multiplier : 0;
+      const currentFatigue = client.farmDb.get(key, 'fatigueLevel');
+      const newFatigue = Math.floor(currentFatigue * 1.2);
 
       client.farmDb.set(key, false, 'bonusAvailable');
       client.farmDb.math(key, "+", farmedCopper + bonusCopper, 'copper');
-      client.farmDb.inc(key, 'fatigueLevel');
+      client.farmDb.set(key, newFatigue, 'fatigueLevel');
       client.farmDb.set(key, currentTime, 'lastFarmed');
 
       const bonusMsg = bonusAvailable ? `\nFirst farm of the day bonus: ${format.toGSC(bonusCopper)}!` : '';

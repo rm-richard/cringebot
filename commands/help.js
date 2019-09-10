@@ -1,6 +1,6 @@
 const helpMessage = `\`\`\`
 Supported commands:
-  !farm          - farm for gold every 20 minutes
+  !farm          - farm for gold
   !farm invest   - upgrade your farm if you have enough gold
   !farm tiers    - list farm upgrades with costs
 
@@ -10,6 +10,11 @@ Supported commands:
   !played        - display your total time spent in WoW
 
   !help          - display this message
+
+Concepts:
+  Fatigue: each level adds more delay between farms. Each successful
+           farm increases fatigue by 20%. Reduced by 1 every hour.
+  Daily bonus: the first farm each day yields extra 400% gold.
 \`\`\``;
 
 exports.run = (client, message, args) => {
