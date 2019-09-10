@@ -12,7 +12,8 @@
   "dependencies": {
     "better-sqlite-pool": "^0.2.2",
     "discord.js": "^11.5.1",
-    "enmap": "^5.1.2"
+    "enmap": "^5.1.2",
+    "node-cron": "^2.0.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -46,8 +46,6 @@ exports.run = (client, message, args) => {
   }
   else {
     // standard farm + status flow
-    reduceFatigue(client, key);
-
     const currentTime = new Date().getTime();
     const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
     const diffMs = farmAvailable - currentTime;
@@ -91,24 +89,10 @@ function invest(key, client, message, farmTierIdx, farmTier, totalCopper) {
   }
 }
 
-function reduceFatigue(client, key) {
-  const timeSinceLastFarm = new Date().getTime() - client.farmDb.get(key, 'lastFarmed');
-  const currentDelay = calculateDelay(client, key);
-
-  if (timeSinceLastFarm < currentDelay * 2) {
-    // farmed too soon, not reducing fatigue
-    return;
-  }
-
-  const lvlDrop = Math.floor(timeSinceLastFarm / client.config.fatigue.decreaseIntervalMs);
-  const newLevel = Math.max(0, client.farmDb.get(key, 'fatigueLevel') - lvlDrop);
-  client.farmDb.set(key, newLevel, 'fatigueLevel');
-}
-
 function calculateDelay(client, key) {
   const fatigueLvl = client.farmDb.get(key, 'fatigueLevel');
   const cfg = client.config.fatigue;
-  return (cfg.initial + (cfg.scalar * Math.pow(cfg.base, fatigueLvl))) * 60 * 1000;
+  return (cfg.initial + (cfg.scalar * Math.pow(cfg.base, fatigueLvl - 1))) * 60 * 1000;
 }
 
 function getFarmFromAvg(averageGain) {
