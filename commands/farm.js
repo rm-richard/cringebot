@@ -101,7 +101,7 @@ function invest(key, client, message, farmTierIdx, farmTier, totalCopper) {
 function calculateDelay(client, key) {
   const fatigueLvl = client.farmDb.get(key, 'fatigueLevel');
   const cfg = client.config.fatigue;
-  return (cfg.initial + (cfg.scalar * Math.pow(cfg.base, fatigueLvl - 1))) * 60 * 1000;
+  return (cfg.initial + (cfg.scalar * Math.pow(cfg.base, fatigueLvl))) * 60 * 1000;
 }
 
 function getFarmFromAvg(averageGain) {
