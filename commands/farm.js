@@ -11,7 +11,9 @@ exports.run = (client, message, args) => {
     lastFarmed: 0,
     farmTier: 0,
     fatigueLevel: 0,
-    bonusAvailable: false
+    bonusAvailable: false,
+    ascension: 0,
+    ascensionMultiplier: 1
   });
 
   const farmTierIdx = client.farmDb.get(key, 'farmTier');
@@ -43,6 +45,21 @@ exports.run = (client, message, args) => {
       .addField('Farm tier', farmTier.name, true)
       .addField('Next tier cost', format.toGSC(farmTier.investCost, true), true)
       .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true);
+      message.channel.send(reply);
+  }
+  else if (args[0] === 'ascend') {
+    const currentALvl = client.farmDb.get(key, 'ascension');
+    const currentAMulti = client.farmDb.get(key, 'ascensionMultiplier');
+    const nextAMulti = currentAMulti + client.farmDb.get(key, 'farmTier');
+
+    const reply = new Discord.RichEmbed().setColor('#faeb14')
+      .setTitle('!!! WARNING !!!')
+      .setDescription(`Ascending will reset your progress, but it will grant you a permanent bonus to all of your future gold yields.
+
+        - Ascension level: ${currentALvl} --> ${currentALvl + 1}
+        - Gold multiplier: ${currentAMulti}x --> ${nextAMulti}x
+
+      It costs ${format.toGSC(1000000000, true)} to ascend. Do you really want to do this?`);
       message.channel.send(reply);
   }
   else {
