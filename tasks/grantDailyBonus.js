@@ -3,7 +3,7 @@ var cron = require('node-cron');
 function run(client) {
   console.log('[Bonus] Granting daily bonuses');
   client.farmDb.forEach((val, key) => {
-    val.bonusAvailable = true;
+    client.farmDb.set(key, true, 'bonusAvailable');
   });
 }
 
