@@ -75,9 +75,7 @@ exports.run = (client, message, args) => {
       .addField('Total gold', format.toGSC(client.farmDb.get(key, 'copper')), true)
       .addField('Farm tier', farmTier.name, true)
       .addField('Next tier cost', format.toGSC(farmTier.investCost, true), true)
-      .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true)
-      .addBlankField()
-      .setFooter("To upgrade your farm, type '!farm invest'. View upgrades with '!farm tiers'.");
+      .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true);
     message.channel.send(reply);
   }
 }
