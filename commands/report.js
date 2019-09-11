@@ -10,7 +10,15 @@ exports.run = (client, message, args) => {
   var reply = `User status report:\n`;
   client.farmDb.forEach((val, key) => {
     var name = client.guilds.first().members.get(key).displayName;
-    reply += `${name}  -  Tier: ${val.farmTier}, Fatigue: ${val.fatigueLevel}, BonusAvailable: ${val.bonusAvailable}\n`;
+    var played = 'No data';
+
+    try {
+      played = format.toDisplayedTime(client.playDb.get(key, 'totalTime'))
+    } catch (error) {
+      // ignore
+    }
+
+    reply += `${key} - ${name}  -  Tier: ${val.farmTier}, Fatigue: ${val.fatigueLevel}, BonusAvailable: ${val.bonusAvailable}, TotalPlayed: ${played}\n`;
   });
   message.reply(reply);
 }

@@ -8,12 +8,20 @@ exports.run = (client, message, args) => {
   }
 
   const boj = '<:boj:620585665805025280>';
-  let reply = new Discord.RichEmbed();
-  reply.setColor('#4bd4fa')
+  let shop = new Discord.RichEmbed();
+  shop.setColor('#4bd4fa')
     .setTitle('BoG (Badge of Gametime) Shop')
-    .addField(`1x ${boj}  !buy nap`, 'You nap a little, reducing your fatigue level by 1.', true)
-    .addField(`5x ${boj}  !buy rest`, 'You get a full night\'s sleep. This resets your fatigue level to 0.', true)
-    .addField(`1x ${boj}  !buy quads`, 'You invest extra time in your next harvest. The next !farm command will earn you 400% gold', true)
-    .addField(`10x ${boj}  !buy invest`, 'Igor rode the pump again, and Ethereum prices are inflated as fuck. You decide to pay for your next upgrade in an exotic currency.', true);
-  message.reply(reply);
+    .addField(`1x ${boj}  !buy nap`, 'Reduces your fatigue level by 1.')
+    .addField(`5x ${boj}  !buy rest`, 'Resets your fatigue level to 0.')
+    .addField(`5x ${boj}  !buy bonus`, 'Resets your daily bonus, your next farm will yield 400% extra gold')
+    .addField(`10x ${boj}  !buy invest`, 'Upgrades your farm, but you lose all of your current gold.');
+
+  const balance = `<@${message.author.id}>, you currently have ${availableBogs(client, message.author.id)}x ${boj}`;
+  message.channel.send(balance, shop);
+}
+
+function availableBogs(client, id) {
+  const bogsAll = Math.floor(client.playDb.get(id, 'totalTime') / (60*60*1000));
+  const bogsSpent = client.farmDb.get(id, 'bogSpent') || 0;
+  return bogsAll - bogsSpent;
 }

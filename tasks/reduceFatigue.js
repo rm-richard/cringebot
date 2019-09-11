@@ -7,13 +7,13 @@ function run(client) {
     client.farmDb.set(key, newLevel, 'fatigueLevel');
   });
 
-  try {
-    client.channels.get(client.config.spamChannel).send('Fatigue levels are reduced by 1. Check your farms!');
+  /*try {
+    client.channels.get(client.config.spamChannel).send('Fatigue levels are reduced by 2. Check your farms!');
   } catch (error) {
     console.log(error);
-  }
+  }*/
 }
 
 exports.schedule = (client) => {
-  cron.schedule('0 */3 * * *', () => run(client));
+  cron.schedule('0 */2 * * *', () => run(client));
 };
