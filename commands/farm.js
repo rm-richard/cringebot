@@ -87,7 +87,7 @@ exports.run = (client, message, args) => {
 
           - Ascension level: **${currentALvl} --> ${currentALvl + 1}**
           - Gold gain: **${Math.round(currentAMulti * 100)}% --> ${Math.round(nextAMulti * 100)}%**
-          - Fatigue resets to zero
+          - Fatigue and farm timer reset to zero
           - You will become a Rabszolga again
 
         It costs ${format.toGSC(10000000, true)} to ascend. If you really want to do it, type '!farm ascend --doit'`);
