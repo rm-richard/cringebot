@@ -21,6 +21,10 @@ exports.run = (client, message, args) => {
   const farmTier = client.config.farmTiers[farmTierIdx];
   const totalCopper = client.farmDb.get(key, 'copper');
 
+  const currentTime = new Date().getTime();
+  const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
+  const diffMs = farmAvailable - currentTime;
+
   if (args[0] === 'invest') {
     invest(key, client, message, farmTierIdx, farmTier, totalCopper);
   }
@@ -40,7 +44,15 @@ exports.run = (client, message, args) => {
     }
   }
   else if (args[0] === 'status') {
+    var description = '';
+    if (farmAvailable < currentTime) {
+      description = 'Farming is **AVAILABLE**!';
+    } else {
+      description = `Farming will be available in ${format.toDisplayedTime(diffMs)}.`;
+    }
+
     const reply = new Discord.RichEmbed().setColor('#0cf246')
+      .setDescription(description)
       .setThumbnail(message.author.displayAvatarURL)
       .addField('Total gold', format.toGSC(client.farmDb.get(key, 'copper')), true)
       .addField('Farm tier', farmTier.name, true)
@@ -65,10 +77,6 @@ exports.run = (client, message, args) => {
   }
   else {
     // standard farm + status flow
-    const currentTime = new Date().getTime();
-    const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
-    const diffMs = farmAvailable - currentTime;
-
     const reply = new Discord.RichEmbed();
 
     if (farmAvailable < currentTime) {
