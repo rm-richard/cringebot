@@ -13,7 +13,8 @@
     "better-sqlite-pool": "^0.2.2",
     "discord.js": "^11.5.1",
     "enmap": "^5.1.2",
-    "node-cron": "^2.0.3"
+    "node-cron": "^2.0.3",
+    "roman-numbers": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",

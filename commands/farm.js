@@ -1,6 +1,7 @@
 const Enmap = require('enmap');
 const Discord = require('discord.js');
 const format = require('../lib/formatters.js');
+const { arabToRoman } = require('roman-numbers');
 
 exports.run = (client, message, args) => {
   const key = message.author.id;
@@ -20,6 +21,9 @@ exports.run = (client, message, args) => {
   const farmTierIdx = client.farmDb.get(key, 'farmTier');
   const farmTier = client.config.farmTiers[farmTierIdx];
   const totalCopper = client.farmDb.get(key, 'copper');
+  const currentALvl = client.farmDb.get(key, 'ascension') || 0;
+  const currentAMulti = client.farmDb.get(key, 'ascensionMultiplier') || 1;
+  const ascensionPrefix = currentALvl > 0 ? `Ascended ${arabToRoman(currentALvl)}. ` : '';
 
   const currentTime = new Date().getTime();
   const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
@@ -55,25 +59,40 @@ exports.run = (client, message, args) => {
       .setDescription(description)
       .setThumbnail(message.author.displayAvatarURL)
       .addField('Total gold', format.toGSC(client.farmDb.get(key, 'copper')), true)
-      .addField('Farm tier', farmTier.name, true)
+      .addField('Farm tier', `${ascensionPrefix}${farmTier.name}`, true)
       .addField('Next tier cost', format.toGSC(farmTier.investCost, true), true)
       .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true);
       message.channel.send(reply);
   }
   else if (args[0] === 'ascend') {
-    const currentALvl = client.farmDb.get(key, 'ascension');
-    const currentAMulti = client.farmDb.get(key, 'ascensionMultiplier');
-    const nextAMulti = currentAMulti + client.farmDb.get(key, 'farmTier');
+    const nextAMulti = currentAMulti + (client.farmDb.get(key, 'farmTier') / 10);
 
-    const reply = new Discord.RichEmbed().setColor('#faeb14')
-      .setTitle('!!! WARNING !!!')
-      .setDescription(`Ascending will reset your progress, but it will grant you a permanent bonus to all of your future gold yields.
+    if (args[1] === '--doit') {
+      // just ascend
+      const copper = client.farmDb.get(key, 'copper') || 0;
+      if (copper < 10000000) return message.reply(`you dont have enought gold to ascend.`);
 
-        - Ascension level: ${currentALvl} --> ${currentALvl + 1}
-        - Gold multiplier: ${currentAMulti}x --> ${nextAMulti}x
+      client.farmDb.set(key, 0, 'copper');
+      client.farmDb.set(key, 0, 'lastFarmed');
+      client.farmDb.set(key, 0, 'farmTier');
+      client.farmDb.set(key, 0, 'fatigueLevel');
+      client.farmDb.set(key, currentALvl + 1, 'ascension');
+      client.farmDb.set(key, nextAMulti, 'ascensionMultiplier');
+      message.reply(`you are now an __**Ascended ${arabToRoman(currentALvl+1)}. Rabszolga**__. Get !farm-ing!`);
+    }
+    else {
+      const reply = new Discord.RichEmbed().setColor('#faeb14')
+        .setTitle('!!! WARNING !!!')
+        .setDescription(`Ascending will reset your progress, but it will grant you a permanent bonus to all of your future gold yields.
 
-      It costs ${format.toGSC(1000000000, true)} to ascend. Do you really want to do this?`);
+          - Ascension level: **${currentALvl} --> ${currentALvl + 1}**
+          - Gold gain: **${Math.round(currentAMulti * 100)}% --> ${Math.round(nextAMulti * 100)}%**
+          - Fatigue resets to zero
+          - You will become a Rabszolga again
+
+        It costs ${format.toGSC(10000000, true)} to ascend. If you really want to do it, type '!farm ascend --doit'`);
       message.channel.send(reply);
+    }
   }
   else {
     // standard farm + status flow
@@ -81,7 +100,7 @@ exports.run = (client, message, args) => {
 
     if (farmAvailable < currentTime) {
       const bonusAvailable = client.farmDb.get(key, 'bonusAvailable');
-      const farmedCopper = getFarmFromAvg(farmTier.averageGain);
+      const farmedCopper = Math.floor(getFarmFromAvg(farmTier.averageGain) * currentAMulti);
       const bonusCopper = bonusAvailable ? farmedCopper * client.config.bonus.multiplier : 0;
 
       client.farmDb.set(key, false, 'bonusAvailable');
@@ -104,7 +123,7 @@ exports.run = (client, message, args) => {
     reply.addBlankField()
       .setThumbnail(message.author.displayAvatarURL)
       .addField('Total gold', format.toGSC(client.farmDb.get(key, 'copper')), true)
-      .addField('Farm tier', farmTier.name, true)
+      .addField('Farm tier', `${ascensionPrefix}${farmTier.name}`, true)
       .addField('Next tier cost', format.toGSC(farmTier.investCost, true), true)
       .addField(`Fatigue level: ${client.farmDb.get(key, 'fatigueLevel')}`, format.toDisplayedTime(calculateDelay(client, key)), true);
     message.channel.send(reply);
