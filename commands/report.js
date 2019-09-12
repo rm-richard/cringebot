@@ -18,7 +18,7 @@ exports.run = (client, message, args) => {
       // ignore
     }
 
-    reply += `${key} - ${name}  -  Tier: ${val.farmTier}, Fatigue: ${val.fatigueLevel}, BonusAvailable: ${val.bonusAvailable}, TotalPlayed: ${played}\n`;
+    reply += `${key} - ${name}  -  Ascension: ${val.ascension}, Tier: ${val.farmTier}, Fatigue: ${val.fatigueLevel}, BonusAvailable: ${val.bonusAvailable}, TotalPlayed: ${played}\n`;
   });
   message.reply(reply);
 }
