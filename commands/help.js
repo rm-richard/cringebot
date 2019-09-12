@@ -3,6 +3,7 @@ Supported commands:
   !farm          - farm for gold
   !farm invest   - upgrade your farm if you have enough gold
   !farm tiers    - list farm upgrades with costs
+  !farm ascend   - reset your progress for permanent gold bonus
 
   !shop          - list items buyable with BOGs
   !buy 'item'    - buy an item from the BOG shop
