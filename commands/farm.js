@@ -24,6 +24,7 @@ exports.run = (client, message, args) => {
   const currentALvl = client.farmDb.get(key, 'ascension') || 0;
   const currentAMulti = client.farmDb.get(key, 'ascensionMultiplier') || 1;
   const ascensionPrefix = currentALvl > 0 ? `Ascended ${arabToRoman(currentALvl)}. ` : '';
+  const costToAscend = 10000000 * (currentALvl * 3 + 1);
 
   const currentTime = new Date().getTime();
   const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
@@ -65,17 +66,18 @@ exports.run = (client, message, args) => {
       message.channel.send(reply);
   }
   else if (args[0] === 'ascend') {
-    const nextAMulti = currentAMulti + (client.farmDb.get(key, 'farmTier') / 10);
+    const nextAMulti = currentAMulti + (currentALvl + 1) * (client.farmDb.get(key, 'farmTier') / 10);
 
     if (args[1] === '--doit') {
       // just ascend
       const copper = client.farmDb.get(key, 'copper') || 0;
-      if (copper < 10000000) return message.reply(`you dont have enought gold to ascend.`);
+      if (copper < costToAscend) return message.reply(`you dont have enought gold to ascend. You need ${format.toGSC(costToAscend, true)}`);
 
       client.farmDb.set(key, 0, 'copper');
       client.farmDb.set(key, 0, 'lastFarmed');
       client.farmDb.set(key, 0, 'farmTier');
       client.farmDb.set(key, 0, 'fatigueLevel');
+      client.farmDb.set(key, 0, 'bogSpent');
       client.farmDb.set(key, currentALvl + 1, 'ascension');
       client.farmDb.set(key, nextAMulti, 'ascensionMultiplier');
       message.reply(`you are now an __**Ascended ${arabToRoman(currentALvl+1)}. Rabszolga**__. Get !farm-ing!`);
@@ -88,9 +90,10 @@ exports.run = (client, message, args) => {
           - Ascension level: **${currentALvl} --> ${currentALvl + 1}**
           - Gold gain: **${Math.round(currentAMulti * 100)}% --> ${Math.round(nextAMulti * 100)}%**
           - Fatigue and farm timer reset to zero
-          - You will become a Rabszolga again
+          - You regain your spent BOGs
+          - You become a Rabszolga again
 
-        It costs ${format.toGSC(10000000, true)} to ascend. If you really want to do it, type '!farm ascend --doit'`);
+        It costs ${format.toGSC(costToAscend, true)} to ascend. If you really want to do it, type '!farm ascend --doit'`);
       message.channel.send(reply);
     }
   }
@@ -133,6 +136,9 @@ exports.run = (client, message, args) => {
 function invest(key, client, message, farmTierIdx, farmTier, totalCopper) {
   if (totalCopper < farmTier.investCost) {
     return message.reply(`not enough funds! You need ${format.toGSC(farmTier.investCost)} to improve your farm!`);
+  }
+  else if (client.farmDb.get(key, 'farmTier') === client.config.farmTiers.length - 1) {
+    return message.reply(`you have already reached the max farm tier upgrade and!`);
   }
   else {
     client.farmDb.math(key, "-", farmTier.investCost, 'copper');
