@@ -30,8 +30,11 @@ exports.run = (client, message, args) => {
   const farmAvailable = client.farmDb.get(key, 'lastFarmed') + calculateDelay(client, key);
   const diffMs = farmAvailable - currentTime;
 
-  if (args[0] === 'invest') {
+  if (args[0] === 'investOne') {
     invest(key, client, message, farmTierIdx, farmTier, totalCopper);
+  }
+  else if (args[0] === 'invest') {
+    investAll(key, client, message);
   }
   else if (args[0] === 'tiers') {
     var reply = 'Available farm tiers (average income / upgrade cost):\n';
@@ -138,12 +141,35 @@ function invest(key, client, message, farmTierIdx, farmTier, totalCopper) {
     return message.reply(`not enough funds! You need ${format.toGSC(farmTier.investCost)} to improve your farm!`);
   }
   else if (client.farmDb.get(key, 'farmTier') === client.config.farmTiers.length - 1) {
-    return message.reply(`you have already reached the max farm tier upgrade and!`);
+    return message.reply(`you have already reached the max farm tier upgrade!`);
   }
   else {
     client.farmDb.math(key, "-", farmTier.investCost, 'copper');
     client.farmDb.set(key, farmTierIdx + 1, 'farmTier');
     return message.reply(`farm improved! You are now a ${client.config.farmTiers[farmTierIdx+1].name}! GG`)
+  }
+}
+
+function investAll(key, client, message) {
+  let currentTierIdx = client.farmDb.get(key, 'farmTier');
+  let currentTier = client.config.farmTiers[currentTierIdx];
+  let totalCopper = client.farmDb.get(key, 'copper');
+
+  if (totalCopper < currentTier.investCost) {
+    return message.reply(`not enough funds! You need ${format.toGSC(currentTier.investCost)} to improve your farm!`);
+  }
+  else if (currentTierIdx === client.config.farmTiers.length - 1) {
+    return message.reply(`you have already reached the max farm tier upgrade!`);
+  }
+  else {
+    while (totalCopper >= currentTier.investCost && currentTierIdx < client.config.farmTiers.length - 1) {
+      client.farmDb.math(key, "-", currentTier.investCost, 'copper');
+      client.farmDb.set(key, currentTierIdx + 1, 'farmTier');
+      currentTierIdx += 1;
+      currentTier = client.config.farmTiers[currentTierIdx];
+      totalCopper = client.farmDb.get(key, 'copper');
+    }
+    return message.reply(`farm improved! You are now a ${currentTier.name}! GG`)
   }
 }
 
